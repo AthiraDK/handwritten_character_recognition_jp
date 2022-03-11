@@ -33,7 +33,7 @@ G-type:
   resolution: [128, 127]
   record_format: '>2H8sI4B4H2B30x8128s11x'
   char_code_index: 1
-  image_data_index: 4
+  image_data_index: 14
   bit_depth': 1
   char_set: 'JIS_X_0208'
 
