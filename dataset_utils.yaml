@@ -1,0 +1,64 @@
+# ETL dataset metadata
+
+# ETL-1 has M-type
+M-type:
+  record_size: 2052
+  resolution: [64, 63]
+  record_format: '>H2sH6BI4H4B4x2016s4x'
+  char_code_index: 3
+  image_data_index: 18
+  bit_depth': 4
+  char_set: 'JIS_X_0201'
+
+C-type:
+  record_size: 2952
+  resolution: [72, 76]
+  record_format: '>9xB206x2736s'
+  char_code_index: 0
+  image_data_index: 1
+  bit_depth': 4
+  char_set: 'JIS_X_0201'
+
+B-type:
+  record_size: 512
+  resolution: [64, 63]
+  record_format: '>2H4s504s'
+  char_code_index: 2
+  image_data_index: 3
+  bit_depth': 1
+  char_set: 'JIS_X_0208'
+
+G-type:
+  record_size: 8199
+  resolution: [128, 127]
+  record_format: '>2H8sI4B4H2B30x8128s11x'
+  char_code_index: 1
+  image_data_index: 4
+  bit_depth': 1
+  char_set: 'JIS_X_0208'
+
+# Script information - depends on which ETL dataset is used for each scripts
+
+katakana:
+  data_source : 'ETL1/*'
+  data_format : 'M-type'
+  jis_version : 'JIS_X_0201'
+  # katakana range according to shift JIS code
+  start_hex : '0xa1'
+  end_hex : '0xdf'
+
+hiragana:
+  data_source : 'ETL8G/*'
+  data_format : 'G-type'
+  jis_version : 'JIS_X_0208'
+  # hiragana range according to JIS code (row 4 : x24__)
+  start_hex : '0x2400'
+  end_hex : '0x2499'
+
+kanji:
+  data_source : 'ETL8G/*'
+  data_format : 'G-type'
+  jis_version : 'JIS_X_0208'
+  # kanji range found in the dataset (non-hiragana codes)
+  start_hex : '0x3025'
+  end_hex : '0x4f44'
