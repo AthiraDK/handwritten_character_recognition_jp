@@ -16,7 +16,7 @@ class ETLDataset:
     def __init__(self, datapath='/home/athira//Data/', yaml_path='..//data_formats.yaml'):
         self.datapath = datapath
         self.yaml_path = yaml_path
-        self.map_hex = {}
+        self.dict_hex = {}
 
     def read_data_yaml(self, key='ETL-1'):
         with open(self.yaml_path, 'r') as stream:
@@ -80,7 +80,7 @@ class ETLDataset:
 
         df_etl_data = pd.DataFrame(list_etl_files)
         # find true script
-        df_etl_data['true_script'] = df_etl_data['hex_char'].apply(lambda x:map_hex_to_script(x))
+        df_etl_data['true_script'] = df_etl_data['hex_char'].apply(lambda x:self.map_hex_to_script(x))
         if script == 'all':
             return df_etl_data[df_etl_data['true_script'] != 'not_japanese']
         else :

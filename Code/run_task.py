@@ -10,8 +10,8 @@ etl_data_obj = ETLDataset(data_path, yaml_path)
 (X_train, y_train, X_test, y_test) = etl_data_obj.get_train_test(script='all', task='identify_script')
 
 # A binary matrix representation of the input. (One hot encoding)
-Y_train = keras.to_categorical(y_train)
-Y_test = keras.to_categorical(y_test)
+Y_train = keras.utils.to_categorical(y_train)
+Y_test = keras.utils.to_categorical(y_test)
 
 n_classes = max(y_train) + 1
 
