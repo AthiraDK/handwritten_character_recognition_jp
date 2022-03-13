@@ -8,11 +8,12 @@ import io
 import struct
 import yaml
 
+from sklearn.model_selection import train_test_split
 from preprocessing_utils import *
 
 class ETLDataset:
 
-    def __init__(self, datapath='../Data/', yaml_path='../data_formats.yaml'):
+    def __init__(self, datapath='/home/athira//Data/', yaml_path='..//data_formats.yaml'):
         self.datapath = datapath
         self.yaml_path = yaml_path
         self.map_hex = {}
@@ -48,10 +49,10 @@ class ETLDataset:
             return test_script[0]
         else:
             ScriptError(f'Script identity is ambiguous, matched with multiple ({len(test_script)}) scripts')
-            return None
+            return None# hi
 
 
-    def get_dataframe(self, script='katakana'):
+    def get_dataframe(self, script='all'):
 
         if script == 'all':
             yaml_keys = ['katakana', 'hiragana','kanji']
@@ -86,9 +87,32 @@ class ETLDataset:
             return df_etl_data[df_etl_data['true_script'] == script]
 
 
-    def get_train_test(self, script='all',task='task1'):
-        from sklearn.model_selection import train_test_split
+    def get_train_test(self, script='all', task='identify_script'):
 
+        df_data = self.get_dataframe(script)
+        df_train, df_test = train_test_split(df_data, test_size= 0.2, stratify=df_data['char_uid'])
+
+        X_train = np.concatenate(list(df_train['image_data']))
+        X_test = np.concatenate(list(df_test['image_data']))
+        X_train = X_train.reshape((-1, 1, 64, 64))
+        X_test = X_test.reshape((-1, 1, 64, 64))
+
+        if task == 'identify_script':
+            map_scripts = {script: ind for ind, script in enumerate(list(df_data['true_script'].unique()))}
+            n_classes = len(map_scripts.keys())
+            if (script == 'all') & (n_classes == 3):
+                y_train = [map_scripts[label] for label in list(df_train['true_script'])]
+                y_test = [map_scripts[label] for label in list(df_test['true_script'])]
+            else:
+                ScriptError(f'Wrong dataset!, {script} script_type, {n_classes} categories found')
+
+        elif task == f'identify_char':
+            map_chars = {char: ind for ind, char in enumerate(list(df_data['char_uid'].unique()))}
+            y_train = [map_chars[label] for label in list(df_train['char_uid'])]
+            y_test = [map_chars[label] for label in list(df_test['char_uid'])]
+            n_classes = len(map_chars.keys())
+        else:
+            print('Unfamiliar task name !')
         return (X_train, y_train, X_test, y_test)
 
     def read_etl_file(self, script, fpath, meta_data):
