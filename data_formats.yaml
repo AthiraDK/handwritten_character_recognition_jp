@@ -41,7 +41,7 @@ G-type:
 
 katakana:
   data_source : 'ETL1/*'
-  data_format : 'M-type'
+  file_format : 'M-type'
   jis_version : 'JIS_X_0201'
   # katakana range according to shift JIS code
   start_hex : '0xa1'
@@ -49,7 +49,7 @@ katakana:
 
 hiragana:
   data_source : 'ETL8G/*'
-  data_format : 'G-type'
+  file_format : 'G-type'
   jis_version : 'JIS_X_0208'
   # hiragana range according to JIS code (row 4 : x24__)
   start_hex : '0x2400'
@@ -57,7 +57,7 @@ hiragana:
 
 kanji:
   data_source : 'ETL8G/*'
-  data_format : 'G-type'
+  file_format : 'G-type'
   jis_version : 'JIS_X_0208'
   # kanji range found in the dataset (non-hiragana codes)
   start_hex : '0x3025'

@@ -15,6 +15,7 @@ class ETLDataset:
     def __init__(self, datapath='../Data/', yaml_path='../data_formats.yaml'):
         self.datapath = datapath
         self.yaml_path = yaml_path
+        self.map_hex = {}
 
     def read_data_yaml(self, key='ETL-1'):
         with open(self.yaml_path, 'r') as stream:
@@ -26,10 +27,29 @@ class ETLDataset:
                 print(f'Exception occured : {e} \n Empty dictionary returned')
                 return {}
 
-    def find_true_script():
+    def update_dict_hex(self, script, script_meta):
 
+        start_hex = script_meta['start_hex']
+        end_hex = script_meta['end_hex']
+        script_range = [hex(jap) for jap in np.arange(start_hex, end_hex)]
+        self.dict_hex[script] = script_range
 
-        return df
+    def map_hex_to_script(self, hex_char):
+
+        test_script = []
+        for script in self.dict_hex.keys():
+
+            if hex_char in self.dict_hex[script]:
+                test_script.append(script)
+
+        if len(test_script) == 0:
+            return 'not_japanese'
+        elif len(test_script) == 1:
+            return test_script[0]
+        else:
+            ScriptError(f'Script identity is ambiguous, matched with multiple ({len(test_script)}) scripts')
+            return None
+
 
     def get_dataframe(self, script='katakana'):
 
@@ -42,6 +62,7 @@ class ETLDataset:
         list_etl_files = []
         for i, key in enumerate(yaml_keys):
             script_meta = self.read_data_yaml(key)
+            self.update_dict_hex(key, script_meta)
             data_source = script_meta['data_source']
 
             if data_source not in folder_names:
@@ -58,7 +79,11 @@ class ETLDataset:
 
         df_etl_data = pd.DataFrame(list_etl_files)
         # find true script
-        return df_etl_data
+        df_etl_data['true_script'] = df_etl_data['hex_char'].apply(lambda x:map_hex_to_script(x))
+        if script == 'all':
+            return df_etl_data[df_etl_data['true_script'] != 'not_japanese']
+        else :
+            return df_etl_data[df_etl_data['true_script'] == script]
 
 
     def get_train_test(self, script='all',task='task1'):
@@ -119,3 +144,7 @@ class ETLDataset:
                             }
                 etl_file_data.append(dict_char)
         return etl_file_data
+
+class ScriptError(Exception):
+    def __init__(self, message):
+        print(message)
